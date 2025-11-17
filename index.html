@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Funny Tome — Wrestling Theme</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif;}
+body, html { height:100%; width:100%; overflow:hidden; background:#000;}
+
+.page {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: yellow; 
+  font-size: 2rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+}
+
+.page h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  color: yellow; 
+  text-shadow:
+    0 0 5px #ffdd57,
+    0 0 10px #ff6f61,
+    0 0 20px #6a0dad,
+    0 0 40px #ffdd57;
+  animation: neonGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes neonGlow {
+  0% { text-shadow: 0 0 5px #ffdd57, 0 0 10px #ff6f61, 0 0 20px #6a0dad, 0 0 40px #ffdd57; }
+  50% { text-shadow: 0 0 10px #ffdd57, 0 0 20px #ff6f61, 0 0 30px #6a0dad, 0 0 50px #ffdd57; }
+  100% { text-shadow: 0 0 5px #ffdd57, 0 0 10px #ff6f61, 0 0 20px #6a0dad, 0 0 40px #ffdd57; }
+}
+
+/* Pages */
+.page1 { background-image: url('https://media.giphy.com/media/3o6ZtaO9BZHcOjmErm/giphy.gif'); }
+.page2 { background-image: url('https://media.giphy.com/media/l4FGuhL4U2WyjdkaY/giphy.gif'); }
+.page3 { 
+    background-image: url('WhatsApp Image 2025-11-10 at 11.54.26.jpeg'); 
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+.page4 { background-color: #111; }
+
+button{
+  margin-top:30px; padding:15px 30px; font-size:1.2rem; border:none; border-radius:8px; cursor:pointer;
+  background-color:#ffdd57; color:#333; transition: transform 0.2s; z-index:2;
+}
+button:hover{ transform:scale(1.06); }
+
+video{ max-width:80%; margin-top:30px; display:none; z-index:2; }
+
+/* Tear overlay */
+.tear-overlay { position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:9999; pointer-events:none; display:flex; }
+.tear-half { width:50%; height:100%; }
+.tear-left { transform-origin:left center; }
+.tear-right { transform-origin:right center; }
+
+/* Tear animation */
+@keyframes tearLeftAnim { to { transform: translateX(-100vw) rotate(-12deg); opacity:0; } }
+@keyframes tearRightAnim{ to { transform: translateX(100vw) rotate(12deg); opacity:0; } }
+.animate-left { animation: tearLeftAnim 3s cubic-bezier(.2,.8,.2,1) forwards; }
+.animate-right { animation: tearRightAnim 3s cubic-bezier(.2,.8,.2,1) forwards; }
+</style>
+</head>
+<body>
+
+<!-- Audio Elements -->
+<audio id="buttonSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
+<audio id="laughSound" src="https://www.soundjay.com/human/sounds/laugh-01.mp3"></audio>
+<audio id="whooshSound" src="https://www.soundjay.com/transport/sounds/whoosh-01.mp3"></audio>
+
+<!-- Pages -->
+<div class="page page1" id="page1">
+  <h1>Want some desi cinema?</h1>
+  <button onclick="nextPage(1,2)">Are you ready for some fun?</button>
+</div>
+
+<div class="page page2" id="page2" style="display:none;">
+  <h1>Some Desi WWE!</h1>
+  <button onclick="nextPage(2,3)">Please fasten your seatbelts</button>
+</div>
+
+<div class="page page3" id="page3" style="display:none;">
+  <h1>Meet Our Local John Cena!</h1>
+  <button onclick="nextPage(3,4)">Call the doctor, she needs some serious mental therapy!</button>
+</div>
+
+<div class="page page4" id="page4" style="display:none;">
+  <h1>Now Doctor needs therapy!</h1>
+  <video id="funVideo" controls muted>
+    <source src="video.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+<script>
+function nextPage(current, next){
+  const page = document.getElementById('page'+current);
+  const nextP = document.getElementById('page'+next);
+
+  // Play button and whoosh sounds immediately on click
+  document.getElementById('buttonSound').currentTime = 0;
+  document.getElementById('buttonSound').play();
+  document.getElementById('whooshSound').currentTime = 0;
+  document.getElementById('whooshSound').play();
+
+  // Create tear overlay
+  const overlay = document.createElement('div');
+  overlay.className='tear-overlay';
+
+  const bg = window.getComputedStyle(page).backgroundImage;
+
+  const left = document.createElement('div');
+  left.className='tear-half tear-left animate-left';
+  left.style.backgroundImage = bg;
+  left.style.backgroundSize = 'cover';
+  left.style.backgroundPosition = 'left';
+
+  const right = document.createElement('div');
+  right.className='tear-half tear-right animate-right';
+  right.style.backgroundImage = bg;
+  right.style.backgroundSize = 'cover';
+  right.style.backgroundPosition = 'right';
+
+  overlay.appendChild(left);
+  overlay.appendChild(right);
+  document.body.appendChild(overlay);
+
+  // Remove overlay and show next page after tear animation
+  setTimeout(()=>{
+    page.style.display='none';
+    if(nextP){
+      nextP.style.display='flex';
+      // Show video and play laugh sound on page 4
+      if(next === 4){
+        const video = document.getElementById('funVideo');
+        video.style.display='block';
+        video.play();
+        const laugh = document.getElementById('laughSound');
+        laugh.currentTime = 0; laugh.play();
+      }
+    }
+    document.body.removeChild(overlay);
+  },450); // match animation duration
+}
+</script>
+
+</body>
+</html>
